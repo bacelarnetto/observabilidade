@@ -45,6 +45,7 @@ services:
     # Specifies location of .conf file in repo for ref in container
     volumes:
       - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf 
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
     networks:
       - opensearch-net
 
