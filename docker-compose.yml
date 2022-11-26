@@ -44,7 +44,7 @@ services:
       - 5044:5044
     # Specifies location of .conf file in repo for ref in container
     volumes:
-      - ./logging-setup/logstash/config/logstash.conf:/usr/share/logstash/pipeline.logstash.conf
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf 
     networks:
       - opensearch-net
 
