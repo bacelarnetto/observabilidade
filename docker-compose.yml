@@ -1,5 +1,15 @@
 version: '3.9'
 services:
+  fluent-bit:
+    image: fluent/fluent-bit
+    container_name: fluent-bit-node1
+    volumes:
+      - ./fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+    depends_on:
+      - opensearch-node1
+    networks:
+      - opensearch-net
+
   opensearch-node1: # This is also the hostname of the container within the Docker network (i.e. https://opensearch-node1/)
     image: opensearchproject/opensearch:latest # Specifying the latest available image - modify if you want a specific version
     container_name: opensearch-node1
