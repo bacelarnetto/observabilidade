@@ -8,7 +8,7 @@ services:
       #- ./fluentbit/conf/parsers.conf:/fluent-bit/etc/parsers.conf
     environment:
       - FLB_HTTP_HOST=0.0.0.0
-      - FLB_HTTP_PORT=8088
+      - FLB_HTTP_PORT=8090
     ports:
       - '24224:24224'
       - '24224:24224/udp'
@@ -59,6 +59,7 @@ services:
     container_name: logstash-node1
     ports:
       - 5044:5044
+      - 8090:8090
     # Specifies location of .conf file in repo for ref in container
     volumes:
       - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf 
