@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-obs
+  labels:
+    app: ms-obs
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-obs
+  template:
+    metadata:
+      name: ms-obs
+      labels:
+        app: ms-obs
+    spec:
+      containers:
+      - name: ms-obs
+        image: bacelarnetto/ms-obs:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-obs-svc
+spec:
+  ports:
+    - port: 8080
+  selector: 
+    app: ms-obs
+  type: NodePort
+
