@@ -43,14 +43,18 @@ data:
         Rename log content
 
     [FILTER]
-        Name            kubernetes
-        Match           kube.*
-        Kube_URL        https://kubernetes.default.svc
-        Merge_Log       On
-        Merge_Log_Trim  On
-        Labels          Off
-        Annotations Off
-        K8S-Logging.Parser Off
+        Name                kubernetes
+        Match               kube.*
+        Kube_URL            https://kubernetes.default.svc:443
+        Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token
+        Kube_Tag_Prefix     kube.var.log.containers.
+        Merge_Log           On
+        Merge_Log_Trim      On
+        Merge_Log_Key       log_processed
+        Labels              Off
+        Annotations         Off
+        K8S-Logging.Parser  Off
         K8S-Logging.Exclude Off
 
     [FILTER]
@@ -61,15 +65,15 @@ data:
         Add_prefix   kubernetes_
 
     [FILTER]
-        Name grep
-        Match kube.*
+        Name    grep
+        Match   kube.*
         Exclude kubernetes_container_name fluent-bit
 
     [FILTER]
-        Name modify
-        Match kube.*
+        Name   modify
+        Match  kube.*
         Rename log content
-        Rename kubernetes_pod_name k8s.pod.name
+        Rename kubernetes_pod_name       k8s.pod.name
         Rename kubernetes_namespace_name k8s.namespace.name
         Remove kubernetes_container_image
         Remove kubernetes_docker_id
@@ -81,25 +85,67 @@ data:
         Add    k8s.cluster.name Onlineboutique
 
     [FILTER]
-        Name     throttle
-        Match    kube.*
-        Rate     5000
-        Window   5
+        Name         throttle
+        Match        kube.*
+        Rate         5000
+        Window       5
         Print_Status true
-        Interval 30s
+        Interval     30s
     
     [OUTPUT]
-        Name http
-        Match *
-        host ${FLB_HTTP_HOST}
-        port ${FLB_HTTP_PORT}
-        format json
+        Name                     http
+        Match                    *
+        host                     ${FLB_HTTP_HOST}
+        port                     ${FLB_HTTP_PORT}
+        format                   json
+        storage.total_limit_size 50M
+
   parsers.conf: |-
+    [PARSER]
+        Name   apache
+        Format regex
+        Regex  ^(?<host>[^ ]*) [^ ]* (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^\"]*?)(?: +\S*)?)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>[^\"]*)")?$
+        Time_Key time
+        Time_Format %d/%b/%Y:%H:%M:%S %z
+    
+    [PARSER]
+        Name   apache2
+        Format regex
+        Regex  ^(?<host>[^ ]*) [^ ]* (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^ ]*) +\S*)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>[^\"]*)")?$
+        Time_Key time
+        Time_Format %d/%b/%Y:%H:%M:%S %z
+    
+    [PARSER]
+        Name   apache_error
+        Format regex
+        Regex  ^\[[^ ]* (?<time>[^\]]*)\] \[(?<level>[^\]]*)\](?: \[pid (?<pid>[^\]]*)\])?( \[client (?<client>[^\]]*)\])? (?<message>.*)$
+    
+    [PARSER]
+        Name   nginx
+        Format regex
+        Regex ^(?<remote>[^ ]*) (?<host>[^ ]*) (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^\"]*?)(?: +\S*)?)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>[^\"]*)")?$
+        Time_Key time
+        Time_Format %d/%b/%Y:%H:%M:%S %z
+
+    [PARSER]
+        Name   json
+        Format json
+        Time_Key time
+        Time_Format %d/%b/%Y:%H:%M:%S %z
+        
     [PARSER]
         Name        docker
         Format      json
         Time_Key    time
         Time_Format %Y-%m-%dT%H:%M:%S.%L
+        Time_Keep   On
+
+    [PARSER]
+        Name        syslog
+        Format      regex
+        Regex       ^\<(?<pri>[0-9]+)\>(?<time>[^ ]* {1,2}[^ ]* [^ ]*) (?<host>[^ ]*) (?<ident>[a-zA-Z0-9_\/\.\-]*)(?:\[(?<pid>[0-9]+)\])?(?:[^\:]*\:)? *(?<message>.*)$
+        Time_Key    time
+        Time_Format %b %d %H:%M:%S
 
   custom_parsers.conf: |
     [PARSER]
