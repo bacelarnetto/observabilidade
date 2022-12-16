@@ -1,0 +1,16 @@
+#GET
+GET /pessoa HTTP/1.1
+Host: localhost:8080
+
+#POST
+POST /pessoa HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{ 
+  "altura": "1.80", 
+  "email": "email1@email.com", 
+  "idade": "37", 
+  "nome": "Jose Carlos", 
+  "peso": "100"
+}

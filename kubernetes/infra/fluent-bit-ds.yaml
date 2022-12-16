@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: fluent-bit
+  namespace: kube-logging
   labels:
     k8s-app: fluent-bit-logging
     version: v1
@@ -52,7 +53,7 @@ spec:
             timeoutSeconds: 1
           env:
             - name: FLB_HTTP_HOST
-              value: 127.0.0.1
+              value: 172.24.132.180
             - name: FLB_HTTP_PORT
               value: '8090'
           volumeMounts:
@@ -77,3 +78,8 @@ spec:
         - name: config
           configMap:
             name: fluent-bit-config
+      serviceAccountName: fluent-bit
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
