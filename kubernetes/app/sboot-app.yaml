@@ -4,7 +4,7 @@ metadata:
   name: ms-obs
   labels:
     app: ms-obs
-  namespace: default
+  namespace: corp-app-obs
 spec:
   replicas: 1
   selector:
@@ -30,6 +30,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ms-obs-svc
+  namespace: corp-app-obs
 spec:
   ports:
     - port: 8080
