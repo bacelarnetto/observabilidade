@@ -20,7 +20,7 @@ data:
     [INPUT]
         Name             tail
         Tag              kube.*
-        Path             /var/log/containers/*_corp*.log
+        Path             /var/log/containers/*.log
         Exclude_Path     /var/log/containers/*kube-system*.log
         Parser           docker
         Mem_Buf_Limit    50MB
