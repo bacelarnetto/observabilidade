@@ -10,6 +10,4 @@ public class MsObsApplication {
 		SpringApplication.run(MsObsApplication.class, args);
 	}
 
-
-
 }

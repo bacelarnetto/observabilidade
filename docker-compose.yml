@@ -7,7 +7,7 @@ services:
       - ./fluent-bit/conf/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
       #- ./fluentbit/conf/parsers.conf:/fluent-bit/etc/parsers.conf
     environment:
-      - FLB_HTTP_HOST=172.25.50.64
+      - FLB_HTTP_HOST=logstash
       - FLB_HTTP_PORT=8090
     ports:
       - '24224:24224'

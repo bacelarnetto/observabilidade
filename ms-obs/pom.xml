@@ -34,10 +34,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jul-to-slf4j</artifactId>
 		</dependency>
@@ -74,6 +70,25 @@
 			<artifactId>validation-api</artifactId>
 			<version>2.0.1.Final</version>
 		</dependency>
+		<!-- CONFIG LOGGIN -->
+		<dependency>
+			<groupId>ch.qos.logback.contrib</groupId>
+			<artifactId>logback-json-classic</artifactId>
+			<version>0.1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback.contrib</groupId>
+			<artifactId>logback-jackson</artifactId>
+			<version>0.1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-model</artifactId>
+			<version>3.6.3</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
