@@ -35,6 +35,8 @@ services:
       # Use http for local run, otherwise will result in ""message":"[ConnectionError]: connect ECONNREFUSED 127.0.0.1:9200"}"
       - 'OPENSEARCH_HOSTS:["http://opensearch-node1:9200"]'
       - 'DISABLE_SECURITY_DASHBOARDS_PLUGIN=true'
+    depends_on:
+      - opensearch-node1
 
   logstash:
     # ref: https://opensearch.org/docs/2.0/clients/logstash/index/
@@ -49,6 +51,8 @@ services:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
     networks:
       - opensearch-net
+    depends_on:
+      - opensearch-node1
 volumes:
   opensearch-data1:
 networks:

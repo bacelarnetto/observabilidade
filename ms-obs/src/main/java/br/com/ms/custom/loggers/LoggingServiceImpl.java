@@ -1,6 +1,5 @@
 package br.com.ms.custom.loggers;
 
-import br.com.ms.custom.loggers.reader.PomReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -8,28 +7,29 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
 @Service
 public class LoggingServiceImpl implements LoggingService{
 
-    Logger logger = LoggerFactory.getLogger(LoggingService.class);
+    static Logger logger = LoggerFactory.getLogger(LoggingServiceImpl.class);
 
     @Override
     public void displayReq(HttpServletRequest request, Object body) {
         StringBuilder reqMessage = new StringBuilder();
         Map<String,String> parameters = getParameters(request);
         reqMessage.append("REQUEST ");
-        reqMessage.append("method = [").append(request.getMethod()).append("]");
-        reqMessage.append(" path = [").append(request.getRequestURI()).append("] ");
+        reqMessage.append("method = [").append(request.getMethod()).append("] ");
+        reqMessage.append("path = [").append(request.getRequestURI()).append("] ");
         if(!parameters.isEmpty()) {
-            reqMessage.append(" parameters = [").append(parameters).append("] ");
+            reqMessage.append("parameters = [").append(parameters).append("] ");
         }
         if(!Objects.isNull(body)) {
-            reqMessage.append(" body = [").append(body).append("]");
+            reqMessage.append("body = [").append(body).append("]");
         }
         getMDC(request);
-        logger.info("Logging Request: {}", reqMessage);
+        logger.info("{}", reqMessage);
     }
 
     @Override
@@ -37,14 +37,14 @@ public class LoggingServiceImpl implements LoggingService{
         StringBuilder respMessage = new StringBuilder();
         Map<String,String> headers = getHeaders(response);
         respMessage.append("RESPONSE ");
-        respMessage.append(" method = [").append(request.getMethod()).append("]");
-        respMessage.append(" path = [").append(request.getRequestURI()).append("] ");
+        respMessage.append("method = [").append(request.getMethod()).append("] ");
+        respMessage.append("path = [").append(request.getRequestURI()).append("] ");
         if(!headers.isEmpty()) {
-            respMessage.append(" ResponseHeaders = [").append(headers).append("]");
+            respMessage.append("ResponseHeaders = [").append(headers).append("] ");
         }
-        respMessage.append(" responseBody = [").append(body).append("]");
+        respMessage.append("responseBody = [").append(body).append("] ");
         getMDC(request);
-        logger.info("Logging Response: {}",respMessage);
+        logger.info("{}",respMessage);
     }
 
     private Map<String,String> getHeaders(HttpServletResponse response) {
@@ -69,16 +69,14 @@ public class LoggingServiceImpl implements LoggingService{
 
     private void getMDC(HttpServletRequest request){
         MDC.clear();
-        MDC.put("nameApp", PomReader.getName(BuildPropertiesInitializer.BUILDE_PROPERTIES));
-        MDC.put("versaoApp", PomReader.getVersion(BuildPropertiesInitializer.BUILDE_PROPERTIES));
-        MDC.put("groupIdApp", PomReader.getNegocio(BuildPropertiesInitializer.BUILDE_PROPERTIES));
+        MDC.put("nameApp", getApplicationInfo().getName());
+        MDC.put("versaoApp", getApplicationInfo().getVersion());
+        MDC.put("groupIdApp", getApplicationInfo().getGroupId());
         MDC.put("ip", getIpClient(request));
         MDC.put("verb", request.getMethod());
         MDC.put("path", request.getRequestURI());
         logger.info("MDC registered");
-        MDC.clear();
     }
-
 
 
     public static String getIpClient(HttpServletRequest request){
@@ -86,6 +84,20 @@ public class LoggingServiceImpl implements LoggingService{
             return request.getRemoteAddr()+":"+request.getRemotePort()+":"+request.getProtocol();
         }
         return "não é um app";
+    }
+
+    private static ApplicationInfo getApplicationInfo(){
+        Properties properties = new Properties();
+        ApplicationInfo applicationInfo = null;
+        try {
+            properties.load(LoggingServiceImpl.class.getResourceAsStream("/project.properties"));
+            applicationInfo  = new ApplicationInfo(properties.getProperty("application.name"),properties.getProperty("application.version"),properties.getProperty("application.groupId"));
+        } catch (IOException e) {
+            logger.error("Erro ao encontrar o arquivo project.properties");
+            applicationInfo  = new ApplicationInfo("Name indefinido","Version indefinido","GroupId indefinido");
+
+        }
+        return applicationInfo;
     }
 
 
