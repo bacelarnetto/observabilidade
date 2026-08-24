@@ -56,6 +56,10 @@ docker-compose -f docker-compose-observer.yml up -d
 
 Útil no cenário híbrido em que o app e o Fluent Bit rodam separadamente em um cluster Kubernetes (ver `kubernetes/`) apontando para esta stack externa.
 
+## Próximos Passos
+
+O projeto cobre hoje apenas o pilar de **logs**. Tracing distribuído (OpenTelemetry) e métricas (Micrometer/Prometheus) ainda não estão implementados — detalhes de como se encaixariam no [guia do projeto](docs/guide/proximos-passos.md).
+
 ## Documentação
 
 Guia completo do projeto (arquitetura do pipeline, microsserviço `ms-obs`, Fluent Bit, Logstash/OpenSearch, Docker Compose e Kubernetes) em [`docs/guide/`](docs/guide/README.md):

@@ -49,6 +49,7 @@ Sobe `fluent-bit`, `opensearch-node1`, `opensearch-dashboards`, `logstash` e o m
 | [Logstash + OpenSearch](logstash-opensearch) | Pipeline de filtros, índice gerado, dashboards |
 | [Kubernetes](kubernetes) | Namespaces, Deployment do app, Helm charts |
 | [Docker Compose](docker-compose) | Portas, variáveis de ambiente, diferenças entre os dois compose files |
+| [Próximos Passos](proximos-passos) | Tracing com OpenTelemetry e métricas — o que falta para cobrir os três pilares de observabilidade |
 
 ---
 
